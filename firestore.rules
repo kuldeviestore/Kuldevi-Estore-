@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // Customers can browse the catalogue. Only verified admins can edit it.
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Orders are created only by the Netlify server function using Admin SDK.
+    // Customers cannot spoof orders or stock changes from browser JavaScript.
+    match /orders/{orderId} {
+      allow read, update: if isAdmin();
+      allow create, delete: if false;
+    }
+
+    // An admin may read only their own role document to complete login verification.
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
+    }
+
+    // Idempotency records are private to the server function.
+    match /orderRequests/{requestId} {
+      allow read, write: if false;
+    }
+  }
+}
