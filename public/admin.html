@@ -26,13 +26,21 @@
 .photo-tile img{width:100%;height:100%;object-fit:contain}.photo-tile button{position:absolute;right:4px;top:4px;border:0;border-radius:50%;background:#c62828;color:#fff;width:23px;height:23px}
 .photo-row{font-size:12px;color:#667085;margin:6px 0}.hidden{display:none!important}.form-actions{display:flex;gap:8px;margin-top:16px}.form-actions button{flex:1}
 .notice{background:#fff7e8;color:#855b00;padding:11px;border-radius:7px;font-size:13px;margin:12px 0}.gstbox{background:#f5f7fb;padding:12px;border-radius:8px;margin-top:10px;font-size:14px;line-height:1.8}
-.hsn-row{display:flex;gap:8px}.hsn-row input{flex:1;min-width:0}.hsn-row button{border:0;border-radius:7px;padding:10px;background:#123b68;color:#fff;font-weight:bold}
+.hsn-row{display:flex;gap:8px}.hsn-row input{flex:1;min-width:0}.hsn-row button{border:0;border-radius:7px;padding:10px;background:#123b68;color:#fff;font-weight:bold}.invoice-btn{border:0;border-radius:6px;padding:9px 12px;background:#176b45;color:#fff;font-weight:bold;margin-top:8px}.invoice-note{font-size:11px;color:#667085;margin-top:6px}
 @media(max-width:800px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.top{padding:14px 4%}.logo{font-size:21px}.wrap{padding:18px 3%}.panel{padding:15px}.stats{gap:9px}.stat{padding:13px}.stat strong{font-size:21px}}
+
+.return-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.return-tools select,.return-tools input{padding:9px;border:1px solid #cbd5e1;border-radius:7px;min-width:130px}
+.return-badge{display:inline-block;background:#fff1f0;color:#b42318;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.return-panel{border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin:16px 0}
+.return-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.return-stat{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:8px}
+.return-stat b{font-size:22px;display:block}
 </style>
 </head>
 <body>
-<header class="top"><div><div class="logo">KE<span>store</span> Admin</div><p>Products, inventory and customer orders</p></div><div><button type="button" onclick="location.href='index.html'">Customer Website</button> <button id="logoutBtn" class="hidden" type="button">Logout</button></div></header>
+<header class="top"><div><div class="logo">KE<span>store</span> Admin</div><p>Products, inventory and customer orders</p></div><div><button id="logoutBtn" class="hidden" type="button">Logout</button></div></header>
 <main class="wrap">
 <section id="loginPanel" class="panel login"><h1>Admin Login</h1><p class="muted">Sign in with an authorized administrator account.</p>
 <form id="loginForm"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
@@ -66,17 +74,49 @@
 <section class="panel"><h2>Manage Products</h2><div class="filters"><input id="productSearch" placeholder="Search name or SKU…"><select id="categoryFilter"><option value="All">All categories</option></select></div>
 <div class="table-wrap"><table><thead><tr><th>Product / SKU</th><th>Final price</th><th>Stock</th><th>Actions</th></tr></thead><tbody id="productsTable"></tbody></table></div></section>
 </div>
-<section class="panel"><h2>Customer Orders</h2><div class="filters"><input id="orderSearch" placeholder="Search order, customer or mobile…"><select id="orderFilter"><option value="All">All statuses</option><option>Pending</option><option>Confirmed</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select></div><div id="ordersList" class="muted">Loading orders…</div></section>
+<section class="panel" id="invoiceSettingsPanel">
+<h2>🧾 GST Invoice Settings</h2>
+<p class="muted">Enter your verified business GST details. These settings are saved only in this browser and are used when printing invoices.</p>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+<div><label>Business / Legal Name</label><input id="invSellerName" value="KEstore" style="width:100%;padding:10px;border:1px solid #d7dce5;border-radius:7px"></div>
+<div><label>GSTIN (if registered)</label><input id="invSellerGstin" maxlength="15" placeholder="15-character GSTIN" style="width:100%;padding:10px;border:1px solid #d7dce5;border-radius:7px;text-transform:uppercase"></div>
+<div><label>Business Phone</label><input id="invSellerPhone" value="8866972211" style="width:100%;padding:10px;border:1px solid #d7dce5;border-radius:7px"></div>
+<div><label>Business Email (optional)</label><input id="invSellerEmail" type="email" placeholder="business@example.com" style="width:100%;padding:10px;border:1px solid #d7dce5;border-radius:7px"></div>
+<div style="grid-column:1/-1"><label>Business Address</label><textarea id="invSellerAddress" style="width:100%;min-height:65px;padding:10px;border:1px solid #d7dce5;border-radius:7px">Prajapati Chowk, Manharpur1 Main Road, Rajkot, Gujarat 360006</textarea></div>
+<div><label>State</label><input id="invSellerState" value="Gujarat" style="width:100%;padding:10px;border:1px solid #d7dce5;border-radius:7px"></div>
+<div><label>Invoice Prefix</label><input id="invPrefix" value="KE/INV" style="width:100%;padding:10px;border:1px solid #d7dce5;border-radius:7px"></div>
+</div>
+<div class="notice">Important: GSTIN, HSN/SAC, buyer details, place of supply and tax treatment must be verified before issuing a legally compliant tax invoice. Existing orders do not store HSN or buyer GSTIN, so those fields will be marked as unavailable rather than invented.</div>
+<button type="button" class="btn" id="saveInvoiceSettings">Save Invoice Settings</button><span id="invoiceSettingsMsg" class="muted" style="margin-left:10px"></span>
+</section>
+<section class="panel return-panel">
+<h2>Return / RTO Management</h2>
+<div class="return-grid">
+ <div class="return-stat"><span>Total Returns / RTO</span><b id="returnCount">0</b></div>
+ <div class="return-stat"><span>Cancelled Orders</span><b id="cancelCount">0</b></div>
+ <div class="return-stat"><span>Return Value</span><b id="returnValue">₹0.00</b></div>
+</div>
+<div id="returnedOrders" class="muted" style="margin-top:12px">No returned orders yet.</div>
+</section>
+<section class="panel"><h2>Customer Orders</h2><div class="filters"><input id="orderSearch" placeholder="Search order, customer or mobile…"><select id="orderFilter"><option value="All">All statuses</option><option>Pending</option><option>Confirmed</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option><option>Returned</option></select></div><div id="ordersList" class="muted">Loading orders…</div></section>
 </section></main>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,getDoc,query,where,getDocs}from"https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
-const firebaseConfig={apiKey:"AIzaSyBMoWAozpZVX8Y5L5h3p_Z_2lWZM_AYQw0",authDomain:"kestore-a6353.firebaseapp.com",projectId:"kestore-a6353",storageBucket:"kestore-a6353.firebasestorage.app",messagingSenderId:"86513678850",appId:"1:86513678850:web:432aca9c0baee8e89c051b",measurementId:"G-YGBD1FMNVS"};
+const firebaseConfig = {
+  apiKey: "AIzaSyBMoWAozpZVX8Y5L5h3p_Z_2lWZM_AYQw0",
+  authDomain: "kestore-a6353.firebaseapp.com",
+  projectId: "kestore-a6353",
+  storageBucket: "kestore-a6353.firebasestorage.app",
+  messagingSenderId: "86513678850",
+  appId: "1:86513678850:web:432aca9c0baee8e89c051b",
+  measurementId: "G-YGBD1FMNVS",
+};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 // Cloudinary unsigned upload configuration for KEstore product photos.
 const CLOUDINARY_CLOUD_NAME="miafnjyd",CLOUDINARY_UPLOAD_PRESET="kestore_upload";
-const categories=["Hand Tools","Power Tools","Electrical","Hardware","Plumbing","Paints & Chemicals","Safety & PPE","Measuring Tools"],statuses=["Pending","Confirmed","Shipped","Delivered","Cancelled"];
+const categories=["Hand Tools","Power Tools","Electrical","Hardware","Plumbing","Paints & Chemicals","Safety & PPE","Measuring Tools"],statuses=["Pending","Confirmed","Shipped","Delivered","Cancelled","Returned"];
 let products=[],orders=[],newPhotos=[],keptPhotos=[],stopProducts=null,stopOrders=null;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),money=n=>Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 const finalPrice=p=>Number(p.finalPrice??Number(p.price||0)*(1+Number(p.gstRate||0)/100));
@@ -91,7 +131,98 @@ $("photoPreviews").addEventListener("click",e=>{const a=e.target.closest("[data-
 $("pPhotos").addEventListener("change",()=>{const selected=[...$("pPhotos").files];if(keptPhotos.length+selected.length>4){alert("Maximum 4 photos total. Remove an existing photo first.");$("pPhotos").value="";return}if(selected.some(f=>!f.type.startsWith("image/")||f.size>5*1024*1024)){alert("Each photo must be an image no larger than 5 MB.");$("pPhotos").value="";return}newPhotos.push(...selected);$("pPhotos").value="";renderPhotoPreviews()});
 function resetForm(){$("productForm").reset();$("editId").value="";$("pIcon").value="🔧";$("pStock").value=10;$("pGst").value="18";$("gstMode").value="exclusive";newPhotos=[];keptPhotos=[];$("formTitle").textContent="Add Product";$("saveBtn").textContent="Save Product";renderPhotoPreviews();calc()}
 function renderProducts(){const q=$("productSearch").value.toLowerCase().trim(),cat=$("categoryFilter").value,items=products.filter(p=>(String(p.name||"").toLowerCase().includes(q)||String(p.sku||"").toLowerCase().includes(q))&&(cat==="All"||p.cat===cat));$("totalProducts").textContent=products.length;$("totalStock").textContent=products.reduce((n,p)=>n+Number(p.stock||0),0);$("lowStock").textContent=products.filter(p=>Number(p.stock||0)<=5).length;$("productsTable").innerHTML=items.map(p=>`<tr><td><b>${esc(p.name)}</b><br><small>SKU: ${esc(p.sku||"—")}</small><br><small>${esc(p.cat||"")}</small></td><td>₹${money(finalPrice(p))}</td><td>${Number(p.stock||0)}</td><td><button class="action edit" data-edit="${esc(p.id)}">Edit</button><button class="action delete" data-delete="${esc(p.id)}">Delete</button></td></tr>`).join("")||'<tr><td colspan="4">No products found.</td></tr>'}
-function renderOrders(){const q=$("orderSearch").value.toLowerCase().trim(),filter=$("orderFilter").value,items=orders.filter(o=>(filter==="All"||o.status===filter)&&[o.id,o.customerName,o.customerPhone,o.customerAddress].join(" ").toLowerCase().includes(q));$("ordersList").innerHTML=items.map(o=>{const lines=Array.isArray(o.items)?o.items:[];return `<article class="orders"><div class="order-head"><b>Order: ${esc(o.id)}</b><b>₹${money(o.total)}</b></div><p><b>Date:</b> ${o.createdAt?new Date(o.createdAt).toLocaleString("en-IN"):"—"}</p><p><b>Customer:</b> ${esc(o.customerName||"—")} · <b>Mobile:</b> ${esc(o.customerPhone||"—")}</p><p><b>Address:</b> ${esc(o.customerAddress||"—")}</p><p><b>Items:</b><br>${lines.map(i=>`${esc(i.name)} | SKU: ${esc(i.sku||"—")} | Qty: ${Number(i.quantity??i.qty??0)} | ₹${money(i.lineTotal??Number(i.price||0)*Number(i.quantity??i.qty??0))}`).join("<br>")||"—"}</p><p><b>Subtotal:</b> ₹${money(o.subtotal)} · <b>GST:</b> ₹${money(o.gstTotal)}</p><p><b>Status:</b> <select data-status="${esc(o.id)}">${statuses.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></p></article>`}).join("")||'<p class="empty">No matching orders found.</p>'}
+const returnReasons=[{code:"C",label:"Customer Cancel"},{code:"D",label:"Damage"},{code:"V",label:"Variation (Colour / Size)"},{code:"NR",label:"Not Received"},{code:"O",label:"Other"}];
+function shownOrderNumber(o){return String(o.orderNumber||o.id||"")+(o.returnReasonCode?("-"+o.returnReasonCode):"")}
+function renderReturnRecords(){
+ const returned=orders.filter(o=>o.returnReasonCode||o.returnedAt||o.status==="Cancelled");
+ $("returnCount").textContent=returned.filter(o=>o.returnReasonCode&&o.returnReasonCode!=="C").length;
+ $("cancelCount").textContent=returned.filter(o=>o.returnReasonCode==="C"||o.status==="Cancelled").length;
+ $("returnValue").textContent="₹"+money(returned.filter(o=>o.returnReasonCode&&o.returnReasonCode!=="C").reduce((s,o)=>s+Number(o.total||0),0));
+ $("returnedOrders").innerHTML=returned.length?returned.map(o=>`<article class="orders"><div class="order-head"><b>${esc(shownOrderNumber(o))}</b><b>₹${money(o.total)}</b></div><p><b>Customer:</b> ${esc(o.customerName||"—")} · ${esc(o.customerPhone||"—")}</p><p><b>Reason:</b> ${esc(returnReasons.find(x=>x.code===o.returnReasonCode)?.label||"Cancelled")} ${o.returnReasonText?"· "+esc(o.returnReasonText):""}</p><p><b>Date:</b> ${o.returnedAt?new Date(o.returnedAt).toLocaleString("en-IN"):"—"}</p><p><b>Original Order:</b> ${esc(o.orderNumber||o.id)}</p></article>`).join(""):'<p class="empty">No returned or cancelled orders yet.</p>';
+}
+function renderOrders(){
+ const q=$("orderSearch").value.toLowerCase().trim(),filter=$("orderFilter").value;
+ const items=orders.filter(o=>(filter==="All"||o.status===filter)&&[o.id,o.orderNumber,o.customerName,o.customerPhone,o.customerAddress].join(" ").toLowerCase().includes(q));
+ $("ordersList").innerHTML=items.map(o=>{
+  const lines=Array.isArray(o.items)?o.items:[];
+  const code=o.returnReasonCode||"";
+  return `<article class="orders">
+   <div class="order-head"><b>Order: ${esc(shownOrderNumber(o))}</b><b>₹${money(o.total)}</b></div>
+   <p><b>Original Order:</b> ${esc(o.orderNumber||o.id)}</p>
+   <p><b>Date:</b> ${o.createdAt?new Date(o.createdAt).toLocaleString("en-IN"):"—"}</p>
+   <p><b>Customer:</b> ${esc(o.customerName||"—")} · <b>Mobile:</b> ${esc(o.customerPhone||"—")}</p>
+   <p><b>Address:</b> ${esc(o.customerAddress||"—")}</p>
+   <p><b>Items:</b><br>${lines.map(i=>`${esc(i.name)} | SKU: ${esc(i.sku||"—")} | Qty: ${Number(i.quantity??i.qty??0)} | ₹${money(i.lineTotal??Number(i.price||0)*Number(i.quantity??i.qty??0))}`).join("<br>")||"—"}</p>
+   <p><b>Subtotal:</b> ₹${money(o.subtotal)} · <b>GST:</b> ₹${money(o.gstTotal)}</p>
+   <p><b>Status:</b> <select data-status="${esc(o.id)}">${statuses.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></p>
+   <div class="return-tools">
+    <select data-reason="${esc(o.id)}"><option value="">Select return/cancel reason</option>${returnReasons.map(r=>`<option value="${r.code}" ${code===r.code?"selected":""}>${r.code} - ${r.label}</option>`).join("")}</select>
+    <input data-reason-text="${esc(o.id)}" placeholder="Short reason (optional)" value="${esc(o.returnReasonText||"")}">
+    <button type="button" class="btn" data-save-reason="${esc(o.id)}">${code?"Update Reason":"Save Return / Cancel"}</button>
+   </div>
+   ${code?`<p><span class="return-badge">Marked: -${esc(code)}</span> <small>Recorded ${o.returnedAt?new Date(o.returnedAt).toLocaleString("en-IN"):""}</small></p>`:""}
+   <button type="button" class="invoice-btn" data-invoice="${esc(o.id)}">🧾 Generate GST Invoice / Print PDF</button>
+   <div class="invoice-note">Use browser print dialog and choose “Save as PDF” to download a PDF copy.</div>
+  </article>`;
+ }).join("")||'<p class="empty">No matching orders found.</p>';
+ renderReturnRecords();
+}
+
+const invoiceSettingIds=["invSellerName","invSellerGstin","invSellerPhone","invSellerEmail","invSellerAddress","invSellerState","invPrefix"];
+function loadInvoiceSettings(){
+ try{const saved=JSON.parse(localStorage.getItem("kestore_invoice_settings")||"{}");invoiceSettingIds.forEach(id=>{if(saved[id]!==undefined)$(id).value=saved[id]})}catch(e){console.warn("Invoice settings could not be loaded",e)}
+}
+function saveInvoiceSettings(){
+ const data={};invoiceSettingIds.forEach(id=>data[id]=$(id).value.trim());
+ const gstin=data.invSellerGstin.toUpperCase();
+ if(gstin&&!/^[0-9A-Z]{15}$/.test(gstin)){alert("Please enter a valid 15-character GSTIN, or leave it blank.");return}
+ data.invSellerGstin=gstin;
+ localStorage.setItem("kestore_invoice_settings",JSON.stringify(data));
+ $("invoiceSettingsMsg").textContent="Saved in this browser.";
+ setTimeout(()=>$("invoiceSettingsMsg").textContent="",2500);
+}
+function invoiceDate(value){const d=value?new Date(value):new Date();return Number.isNaN(d.getTime())?"—":d.toLocaleDateString("en-IN")}
+function generateInvoice(orderId){
+ const o=orders.find(x=>x.id===orderId);if(!o){alert("Order not found.");return}
+ const s={};invoiceSettingIds.forEach(id=>s[id]=$(id).value.trim());
+ const lines=Array.isArray(o.items)?o.items:[];
+ if(!lines.length){alert("This order has no item details; invoice cannot be generated.");return}
+ const rows=lines.map((it,index)=>{
+  const qty=Number(it.quantity??it.qty??0),rate=Number(it.gstRate??0);
+  const taxable=Number(it.price??0)*qty;
+  const tax=Number(it.gstAmount??0)*qty;
+  const total=Number(it.lineTotal??(Number(it.finalUnitPrice??it.price??0)*qty));
+  return {index:index+1,name:it.name||"Item",sku:it.sku||"—",hsn:it.hsn||"—",qty,rate,taxable,tax,total};
+ });
+ const taxableTotal=rows.reduce((a,x)=>a+x.taxable,0);
+ const taxTotal=rows.reduce((a,x)=>a+x.tax,0);
+ const grandTotal=rows.reduce((a,x)=>a+x.total,0);
+ const invoiceNo=`${s.invPrefix||"KE/INV"}/${String(o.orderNumber||o.id).toUpperCase()}`;
+ const gstin=s.invSellerGstin||"Not provided";
+ const safe=esc;
+ const w=window.open("","_blank","width=900,height=900");
+ if(!w){alert("Please allow pop-ups for this site to print the invoice.");return}
+ const itemRows=rows.map(x=>`<tr><td>${x.index}</td><td>${safe(x.name)}<br><small>SKU: ${safe(x.sku)}</small></td><td>${safe(x.hsn)}</td><td class="num">${x.qty}</td><td class="num">₹${money(x.taxable/x.qty||0)}</td><td class="num">${x.rate.toFixed(2)}%</td><td class="num">₹${money(x.tax)}</td><td class="num">₹${money(x.total)}</td></tr>`).join("");
+ const gstBreakup=rows.map(x=>x.rate).filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a-b).map(rate=>{
+  const group=rows.filter(x=>x.rate===rate),base=group.reduce((a,x)=>a+x.taxable,0),tax=group.reduce((a,x)=>a+x.tax,0);
+  return `<tr><td>${rate.toFixed(2)}%</td><td class="num">₹${money(base)}</td><td class="num">₹${money(tax)}</td></tr>`;
+ }).join("");
+ const amountWords="Amount in words: Please verify / fill as required.";
+ w.document.write(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GST Invoice ${safe(invoiceNo)}</title><style>
+ *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#172033;margin:0;padding:24px;background:#f2f4f7}.sheet{max-width:900px;margin:auto;background:#fff;padding:32px;border:1px solid #d9dee7}.topline{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #102d50;padding-bottom:16px}.brand{font-size:27px;font-weight:800;color:#102d50}.tag{font-size:12px;color:#667085;margin-top:5px}.title{text-align:right}.title h1{margin:0;font-size:24px;letter-spacing:1px}.title p{font-size:12px;color:#667085;margin:5px 0}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}.box{border:1px solid #e1e5eb;padding:13px;border-radius:5px}.box h3{font-size:12px;text-transform:uppercase;color:#667085;margin:0 0 9px}.box p{font-size:13px;line-height:1.6;margin:3px 0}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}.meta div{font-size:12px;padding:8px;background:#f7f8fa}.meta b{display:block;color:#667085;margin-bottom:3px}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #dfe3e8;padding:9px 7px;font-size:11px;vertical-align:top}th{background:#f0f3f7;text-align:left}.num{text-align:right;white-space:nowrap}.totals{width:340px;margin:16px 0 0 auto}.totals td{font-size:12px}.grand td{font-weight:bold;font-size:15px;background:#f0f5fa}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}.note{font-size:11px;line-height:1.6;color:#555}.sign{text-align:right;padding-top:35px;font-size:12px}.warning{background:#fff8e8;border:1px solid #f0d99a;padding:10px;margin-top:15px;font-size:11px;line-height:1.5}.actions{text-align:center;margin:18px}.actions button{background:#102d50;color:white;border:0;padding:11px 18px;border-radius:6px;font-weight:bold}@media print{body{background:white;padding:0}.sheet{border:0;padding:12mm;max-width:none}.actions{display:none}.warning{break-inside:avoid}}@media(max-width:600px){body{padding:0}.sheet{padding:14px}.twocol,.bottom{grid-template-columns:1fr}.title{text-align:left}.topline{flex-direction:column}.totals{width:100%}th,td{font-size:9px;padding:5px}}
+ </style></head><body><main class="sheet">
+ <div class="topline"><div><div class="brand">${safe(s.invSellerName||"KEstore")}</div><div class="tag">Hardware and Tools Shop</div><p style="font-size:12px;line-height:1.5;margin-top:8px">${safe(s.invSellerAddress||"Business address not entered")}<br>Phone: ${safe(s.invSellerPhone||"—")}<br>${safe(s.invSellerEmail||"")}</p></div><div class="title"><h1>TAX INVOICE</h1><p>GST Invoice / Customer Copy</p><p><b>Invoice No:</b> ${safe(invoiceNo)}</p><p><b>Invoice Date:</b> ${invoiceDate(o.createdAt)}</p></div></div>
+ <div class="twocol"><div class="box"><h3>Supplier Details</h3><p><b>${safe(s.invSellerName||"KEstore")}</b></p><p>${safe(s.invSellerAddress||"—")}</p><p>GSTIN: <b>${safe(gstin)}</b></p><p>State: ${safe(s.invSellerState||"Not provided")}</p></div><div class="box"><h3>Bill To / Customer</h3><p><b>${safe(o.customerName||"—")}</b></p><p>${safe(o.customerAddress||"—")}</p><p>Mobile: ${safe(o.customerPhone||"—")}</p><p>Buyer GSTIN: Not captured in original order</p></div></div>
+ <div class="meta"><div><b>Order Reference</b>${safe(o.id)}</div><div><b>Place of Supply</b>Not captured — verify before issuing</div><div><b>Payment Status</b>Not recorded in current order data</div><div><b>Order Status</b>${safe(o.status||"—")}</div></div>
+ <table><thead><tr><th>#</th><th>Description</th><th>HSN/SAC</th><th class="num">Qty</th><th class="num">Taxable Unit Value</th><th class="num">GST Rate</th><th class="num">GST Amount</th><th class="num">Line Total</th></tr></thead><tbody>${itemRows}</tbody></table>
+ <table class="totals"><tbody><tr><td>Taxable Value</td><td class="num">₹${money(taxableTotal)}</td></tr><tr><td>Total GST</td><td class="num">₹${money(taxTotal)}</td></tr><tr class="grand"><td>Invoice Total</td><td class="num">₹${money(grandTotal)}</td></tr></tbody></table>
+ <p class="note" style="margin-top:12px">${amountWords}</p>
+ <div class="bottom"><div class="note"><b>GST Rate Summary</b><table><thead><tr><th>GST Rate</th><th>Taxable Value</th><th>GST Amount</th></tr></thead><tbody>${gstBreakup}</tbody></table><p style="margin-top:10px">Thank you for shopping with KEstore.</p></div><div class="sign">For <b>${safe(s.invSellerName||"KEstore")}</b><br><br><br>Authorised Signatory</div></div>
+ <div class="warning"><b>Draft / verification notice:</b> This invoice layout uses the details currently stored in KEstore orders. HSN/SAC, buyer GSTIN, place of supply, tax split (CGST/SGST or IGST), invoice serial compliance and amount-in-words are not fully available in the existing order data. Verify and complete all applicable details and your GST registration particulars before treating this as a statutory GST tax invoice. This document does not certify GST compliance.</div>
+ <div class="actions"><button onclick="window.print()">Print / Save as PDF</button></div></main></body></html>`);
+ w.document.close();
+}
+
 function listen(){if(stopProducts)stopProducts();if(stopOrders)stopOrders();stopProducts=onSnapshot(collection(db,"products"),s=>{products=s.docs.map(d=>({id:d.id,...d.data()}));renderProducts();$("dbStatus").textContent="✓ Connected. Product inventory is live."},e=>{$("dbStatus").textContent="Database error: "+e.message;console.error(e)});stopOrders=onSnapshot(collection(db,"orders"),s=>{orders=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));renderOrders()},e=>{$("ordersList").textContent="Orders error: "+e.message;console.error(e)})}
 function suggestHSN(){const s=($("pName").value+" "+$("pCategory").value).toLowerCase();let code="";if(/hammer|screwdriver|pliers|spanner|wrench|hand tool|chisel|hand saw/.test(s))code="8205";else if(/drill|grinder|power tool|electric saw/.test(s))code="8467";else if(/bolt|nut|screw|washer|fastener/.test(s))code="7318";else if(/wire|cable/.test(s))code="8544";else if(/bulb|lamp|led/.test(s))code="8539";else if(/tap|pipe|plumbing/.test(s))code="8481";else if(/paint|varnish/.test(s))code="3208";else if(/glove|helmet|safety|ppe/.test(s))code="4015";else if(/measuring tape|ruler|measure/.test(s))code="9017";if(code){$("pHsn").value=code;alert("Suggested HSN: "+code+". Please verify the full applicable HSN with your tax professional.")}else alert("No confident suggestion found. Please enter the HSN manually after verification.")}
 $("suggestHsnBtn").addEventListener("click",suggestHSN);
@@ -107,8 +238,44 @@ if(!response.ok||!result.secure_url)throw Error(result.error?.message||`Cloudina
 images.push(result.secure_url);
 }const url=$("pImage").value.trim();if(url&&!/^https?:\/\//i.test(url))throw Error("Enter a valid photo URL.");if(url&&!images.length)images=[url];const old=Number($("pOld").value)||base,data={name:$("pName").value.trim(),sku,cat:$("pCategory").value,hsn:String($("pHsn").value||"").trim(),price:base,gstRate:rate,gstAmount:gst,finalPrice:total,old,stock,images,image:images[0]||"",icon:$("pIcon").value.trim()||"🔧",description:$("pDescription").value.trim(),updatedAt:Date.now()};if(!data.name)throw Error("Product name is required.");if(id)await updateDoc(doc(db,"products",id),data);else{data.createdAt=Date.now();await addDoc(collection(db,"products"),data)}resetForm()}catch(err){alert(err.message);console.error(err)}finally{$("saveBtn").disabled=false;$("saveBtn").textContent=$("editId").value?"Update Product":"Save Product"}});
 $("productsTable").addEventListener("click",async e=>{const edit=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");if(edit){const p=products.find(x=>x.id===edit.dataset.edit);if(!p)return;resetForm();$("editId").value=p.id;$("pName").value=p.name||"";$("pSku").value=p.sku||"";$("pCategory").value=p.cat||categories[0];$("pHsn").value=p.hsn||"";$("pPrice").value=p.price??0;$("pGst").value=String(p.gstRate??0);$("pOld").value=p.old??p.price??0;$("pStock").value=p.stock??0;$("pImage").value=p.image||"";$("pIcon").value=p.icon||"🔧";$("pDescription").value=p.description||"";keptPhotos=Array.isArray(p.images)?[...p.images]:[];if(!keptPhotos.length&&p.image)keptPhotos=[p.image];$("formTitle").textContent="Edit Product";$("saveBtn").textContent="Update Product";renderPhotoPreviews();calc();window.scrollTo({top:0,behavior:"smooth"})}else if(del){const p=products.find(x=>x.id===del.dataset.delete);if(!p||!confirm(`Delete ${p.name}?`))return;try{if(!await isAdmin(auth.currentUser))throw Error("Admin authorization required.");await deleteDoc(doc(db,"products",p.id))}catch(err){alert(err.message)}}});
+loadInvoiceSettings();
+$("saveInvoiceSettings").addEventListener("click",saveInvoiceSettings);
+$("ordersList").addEventListener("click",async e=>{
+ const inv=e.target.closest("[data-invoice]");if(inv){generateInvoice(inv.dataset.invoice);return}
+ const save=e.target.closest("[data-save-reason]");if(!save)return;
+ const id=save.dataset.saveReason,select=$(`reason_${id}`);
+ const reasonEl=document.querySelector(`[data-reason="${CSS.escape(id)}"]`);
+ const textEl=document.querySelector(`[data-reason-text="${CSS.escape(id)}"]`);
+ const code=reasonEl?.value||"";
+ if(!code){alert("Please select a return/cancel reason.");return}
+ const order=orders.find(x=>x.id===id);if(!order)return;
+ try{
+  if(!await isAdmin(auth.currentUser))throw Error("Admin authorization required.");
+  const stamp=Date.now();
+  await updateDoc(doc(db,"orders",id),{
+   returnReasonCode:code,
+   returnReasonText:(textEl?.value||"").trim(),
+   returnedAt:stamp,
+   returnStatus:code==="C"?"Cancelled":"Returned",
+   displayedOrderNumber:`${order.orderNumber||order.id}-${code}`,
+   status:code==="C"?"Cancelled":"Returned",
+   updatedAt:stamp
+  });
+  alert("Return / cancel reason saved.");
+ }catch(err){alert(err.message)}
+});
 $("ordersList").addEventListener("change",async e=>{const s=e.target.closest("[data-status]");if(!s)return;try{if(!await isAdmin(auth.currentUser))throw Error("Admin authorization required.");await updateDoc(doc(db,"orders",s.dataset.status),{status:s.value,updatedAt:Date.now()})}catch(err){alert(err.message)}});
-$("loginForm").addEventListener("submit",async e=>{e.preventDefault();$("loginBtn").disabled=true;setError("");try{const r=await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);if(!await isAdmin(r.user)){await signOut(auth);throw Error("This account is not an authorized administrator.")}}catch(err){setError(err.code==="auth/invalid-credential"?"Invalid email or password.":err.message)}finally{$("loginBtn").disabled=false}});
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();$("loginBtn").disabled=true;setError("");try{const r=await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);if(!await isAdmin(r.user)){await signOut(auth);throw Error("This account is not an authorized administrator.")}}catch(err){
+ const messages={
+  "auth/invalid-credential":"Email અથવા Password ખોટો છે. Firebase Authentication માં account ચકાસો.",
+  "auth/user-not-found":"આ Email થી Firebase Authentication માં account મળ્યું નથી.",
+  "auth/wrong-password":"Password ખોટો છે.",
+  "auth/invalid-api-key":"Firebase API key ખોટી છે. Admin અને Customer Website નું Firebase project configuration તપાસો.",
+  "auth/network-request-failed":"Internet connection અથવા Firebase network connection તપાસો.",
+  "auth/too-many-requests":"ઘણા login પ્રયાસ થયા છે. થોડા સમય પછી ફરી પ્રયાસ કરો."
+ };
+ setError(messages[err.code]||err.message||"Login failed. Firebase settings તપાસો.");
+}finally{$("loginBtn").disabled=false}});
 $("logoutBtn").addEventListener("click",()=>signOut(auth));$("clearBtn").addEventListener("click",resetForm);
 $("productSearch").addEventListener("input",renderProducts);$("categoryFilter").addEventListener("change",renderProducts);$("orderSearch").addEventListener("input",renderOrders);$("orderFilter").addEventListener("change",renderOrders);
 onAuthStateChanged(auth,async user=>{const allowed=await isAdmin(user);if(allowed){setError("");$("loginPanel").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logoutBtn").classList.remove("hidden");listen()}else{$("dashboard").classList.add("hidden");$("loginPanel").classList.remove("hidden");$("logoutBtn").classList.add("hidden");if(user){setError("This account is not an authorized administrator.");await signOut(auth)}if(stopProducts){stopProducts();stopProducts=null}if(stopOrders){stopOrders();stopOrders=null}}});
